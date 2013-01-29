@@ -1,0 +1,88 @@
+@(signupForm: Form[User])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@main("User Sign Up", nav = "signup") {
+    
+    @helper.form(action = routes.Users.submit) {
+        
+        <fieldset>
+            <legend>User Information</legend>
+            
+            @if(signupForm.hasGlobalErrors || signupForm.hasErrors) {
+	            <div class="alert alert-error"">
+		            @if(signupForm.hasGlobalErrors) {
+		            	@signupForm.globalErrors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+		            
+		            @if(signupForm.hasErrors) {
+		            	@signupForm.errors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+		       	</div>
+		    }
+            
+            
+            @inputText(
+                signupForm("username"), 
+                '_label -> "Username", 
+                '_help -> "Please choose a valid username.",
+                '_error -> signupForm.globalError
+            )
+            
+            @inputText(
+                signupForm("email"), '_label -> "Email",
+                '_help -> "Please enter a valid email address."
+            )
+            
+            @inputPassword(
+                signupForm("password.main"), 
+                '_label -> "Password",
+                '_help -> "A password must be at least 6 characters. "
+            )
+            
+            @inputPassword(
+                signupForm("password.confirm"), 
+                '_label -> "Repeat password",
+                '_help -> "Please repeat your password again.",
+                '_error -> signupForm.error("password")
+            )
+            
+        </fieldset>
+        
+        <fieldset>
+            
+            <legend>Location informations</legend>
+            
+            @select(
+                signupForm("user.city"), 
+                options = options(City.list),
+                '_default -> "--- Choose a city ---",
+                '_label -> "City",
+                '_error -> signupForm("user.city").error.map(_.withMessage("Please select your city"))
+            )
+              
+        </fieldset>
+        
+        <fieldset>
+            
+            @checkbox(
+                signupForm("accept"), 
+                '_label -> None, '_text -> "You agree the Terms and conditions",
+                '_showConstraints -> false
+            )
+            
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" class="btn primary" value="Sign Up">
+            <a href="@routes.Application.index" class="btn">Cancel</a>
+        </div>
+        
+    }
+    
+}

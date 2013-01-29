@@ -1,0 +1,114 @@
+@(businessForm: Form[Business], addressForm: Form[BusinessAddress])
+
+@import helper._
+@import helper.twitterBootstrap._
+
+@import models.Country
+@import models.State
+
+@main("Business Sign Up", nav = "signup") {
+    
+    @helper.form(action = routes.Businesses.create) {
+        
+        <fieldset>
+            <legend>Business informations</legend>
+            
+            @if(businessForm.hasGlobalErrors || businessForm.hasErrors || addressForm.hasGlobalErrors || addressForm.hasErrors) {
+	            <div class="alert alert-error"">
+		            @if(businessForm.hasGlobalErrors) {
+		            	@businessForm.globalErrors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+		            
+		            @if(businessForm.hasErrors) {
+		            	@businessForm.errors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+		            
+		            @if(addressForm.hasGlobalErrors) {
+		            	@addressForm.globalErrors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+		            
+		            @if(addressForm.hasErrors) {
+		            	@addressForm.errors.map { error =>
+		            		@error.key : @Messages(error.message, error.args: _*)
+		            	}
+		            }
+	            </div>
+	        }
+            
+            @inputText(
+                businessForm("name"), 
+                '_label -> "name", 
+                '_help -> "Please enter business name.",
+                '_error -> businessForm.globalError
+            )
+            
+            @inputText(
+                businessForm("website"), '_label -> "Website",
+                '_help -> "Please enter company's website."
+            )
+            
+            @inputText(
+                businessForm("established"), '_label -> "Established",
+                '_help -> "Please enter the date company was established."
+            )
+            
+        </fieldset>
+        
+        <fieldset>
+            
+            <legend>Address informations</legend>
+            
+            @inputText(
+                addressForm("line1"), '_label -> "Line 1",
+                '_help -> "Enter a street, PO Box, or Apt #."
+            )
+            
+            @inputText(
+                addressForm("line2"), '_label -> "Line 2",
+                '_help -> "Enter a street, PO Box, or Apt #."
+            )
+            
+            @inputText(
+                addressForm("city"), '_label -> "City",
+                '_help -> "Enter your city."
+            )
+            
+            @select(
+                addressForm("state"), 
+                options = options(State.list),
+                '_default -> "--- Choose a state ---",
+                '_label -> "State",
+                '_error -> addressForm("state").error.map(_.withMessage("Please select your state"))
+            )
+            
+	        @inputText(
+                addressForm("zip"), '_label -> "Zip",
+                '_help -> "Enter your zip code."
+            )
+              
+        </fieldset>
+        
+        <fieldset>
+            
+            @checkbox(
+                businessForm("accept"), 
+                '_label -> None, '_text -> "You agree to the Terms and conditions",
+                '_showConstraints -> false
+            )
+            
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" class="btn primary" value="Sign Up">
+            <a href="@routes.Application.index" class="btn">Cancel</a>
+        </div>
+        
+    }
+    
+}
