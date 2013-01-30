@@ -8,8 +8,6 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0"
 
     val appDependencies = Seq(
-      "net.liftweb" %% "lift-json" % "2.4-M5",
-      "org.scalaj" %% "scalaj-http" % "0.3.6",
       "se.radley" %% "play-plugins-salat" % "1.1"
     )
 
@@ -17,5 +15,4 @@ object ApplicationBuild extends Build {
       routesImport += "se.radley.plugin.salat.Binders._",
       templatesImport += "org.bson.types.ObjectId"  
     )
-
 }

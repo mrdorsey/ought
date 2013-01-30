@@ -1,12 +1,14 @@
 package controllers
 
+import org.bson.types.ObjectId
+import domain._
+import models._
+import views._
 import play.api._
-import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import views._
-import models._
-import org.bson.types.ObjectId
+import play.api.mvc._
+import com.mongodb.casbah.commons.MongoDBObject
 
 object Businesses extends Controller {
 
@@ -31,7 +33,12 @@ object Businesses extends Controller {
         "state" -> nonEmptyText,
         "zip" -> nonEmptyText
       )
-      (BusinessAddress.apply)(BusinessAddress.unapply)
+      {
+	      (id, line1, line2, city, state, zip) => BusinessAddress(id, line1, line2, city, state, zip, null) 
+      }
+      {
+    	  address => Some(address.id, address.line1, address.line2, address.city, address.state, address.zip)
+      }
   )
   
   def form = Action {
@@ -42,11 +49,11 @@ object Businesses extends Controller {
     businessForm().bindFromRequest.fold(
       formWithErrors => BadRequest(html.signup.business(formWithErrors, addressForm())),
       business => {
-        Business.insert(business)
+        BusinessManager.create(business)
         addressForm(business.addressId).bindFromRequest.fold(
             formWithErrors => BadRequest(html.signup.business(businessForm().fill(business), formWithErrors)),
             address => {
-              BusinessAddress.insert(address)
+              BusinessAddressManager.geocodeAndCreateAddress(address)
               Ok(html.signup.businessSummary(business, address))
             }
         )
@@ -58,11 +65,11 @@ object Businesses extends Controller {
     businessForm(businessId).bindFromRequest.fold(
       formWithErrors => BadRequest(html.signup.business(formWithErrors, addressForm())),
       business => {
-        Business.save(business.copy(id = businessId))
+        BusinessManager.update(business)
         addressForm(addressId).bindFromRequest.fold(
             formWithErrors => BadRequest(html.signup.business(businessForm().fill(business), formWithErrors)),
             address => {
-              BusinessAddress.save(address.copy(id = addressId))
+              BusinessAddressManager.geocodeAndUpdateAddress(address)
               Ok(html.signup.businessSummary(business, address))
             }
         )

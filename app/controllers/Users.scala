@@ -7,6 +7,7 @@ import play.api.data.Forms._
 import views._
 import models._
 import org.bson.types.ObjectId
+import domain.UserManager
 
 object Users extends Controller {
 
@@ -57,7 +58,7 @@ object Users extends Controller {
       // Form has errors, redisplay it
       errors => BadRequest(html.signup.user(errors)),
       user => {
-        User.insert(user)
+        UserManager.create(user)
         Ok(html.signup.userSummary(user))
       }
     )

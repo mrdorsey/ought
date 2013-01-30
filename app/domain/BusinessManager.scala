@@ -1,35 +1,31 @@
 package domain
 
 import models.BusinessAddress
-import java.net.URL
-import java.io.DataOutputStream
-import play.mvc.Http
+import play.api.libs.ws._
+import play.api.libs.concurrent.Promise
+import play.api.libs.json.JsValue
+import com.mongodb.casbah.MongoCollection
+import com.mongodb.casbah.commons.MongoDBObject
+import models.Business
+import org.bson.types.ObjectId
 
 object BusinessManager {
 
-  val GeocodingProviderURL = "http://maps.googleapis.com/maps/api/geocode/json?address=[ADDRESS]&sensor=[USESENSOR]"
-  val useSensor = false
-
-  def geocodeAddress(address: BusinessAddress): BusinessAddress = {
-
-    val urlString = GeocodingProviderURL.replace("[ADDRESS]", addressToURLString(address)).replace("[USESENSOR]", useSensor.toString)
-
-    Http(url){inputStream => 
-    	var responseJSON = JsonParser.parse(new InputStreamReader(is))
-    }
-
-    return address
+  def create(business: Business): Business = {
+    Business.insert(business)
+    
+    return business
   }
-
-  private def addressToURLString(address: BusinessAddress): String = {
-    var addressURLString: String = ""
-
-    addressURLString.concat(address.line1.concat("+"))
-    addressURLString = if (address.line2 != null) addressURLString.concat(address.line2.concat("+")) else addressURLString
-    addressURLString.concat(address.city.concat("+"))
-    addressURLString.concat(address.state.concat("+"))
-    addressURLString.concat(address.zip)
-
-    return addressURLString
+  
+  def update(business: Business): Business = {
+    Business.save(business.copy(id = business.id))
+       
+    return business
+  }
+  
+  def delete(id: ObjectId): ObjectId = { 
+    Business.remove(MongoDBObject("_id" -> id))
+    
+    return id
   }
 }
