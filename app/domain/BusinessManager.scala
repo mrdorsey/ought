@@ -8,6 +8,8 @@ import com.mongodb.casbah.MongoCollection
 import com.mongodb.casbah.commons.MongoDBObject
 import models.Business
 import org.bson.types.ObjectId
+import dto.BusinessWithAddressDto
+import scala.collection.mutable.ListBuffer
 
 object BusinessManager {
 
@@ -27,5 +29,19 @@ object BusinessManager {
     Business.remove(MongoDBObject("_id" -> id))
     
     return id
+  }
+  
+  def findNearestBusinesses(center: List[Double], radius: Double): List[BusinessWithAddressDto] = {
+	var businessList: ListBuffer[BusinessWithAddressDto] = ListBuffer()
+    val addresses: List[BusinessAddress] = BusinessAddress.findByCenterAndRadius(center, 20)
+        
+    addresses.foreach( address => {
+      val business: Option[Business] = Business.dao.findOne(MongoDBObject("address_id" -> address.id))
+      val businessWithAddress: BusinessWithAddressDto = BusinessWithAddressDto(business.get, address)
+               
+      businessList += businessWithAddress
+     })
+     
+     return businessList.toList
   }
 }

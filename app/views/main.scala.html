@@ -4,54 +4,34 @@
 
 <html>
     <head>
-        <title>Form samples</title>
+        <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/ought-bootstrap.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/jquery.geo-1.0b1.min.js")" type="text/javascript"></script>
     </head>
     <body>
-        
-        <div class="topbar">
-            <div class="fill">
-                <div class="container">
-                    <a class="brand" href="@routes.Application.index()">HomeHoner</a>
-                    <ul class="nav">
-                        <li class="@("active".when(nav == "signup"))">
-                            <a href="@routes.Users.form">Sign up</a>
-                        </li>
-                        <li class="@("active".when(nav == "contact"))">
-                            <a href="@routes.Businesses.form">Businesses</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-
-            <div class="content">
-                
-                <div class="page-header">
-                    <h1>@title</h1>
-                </div>
-
-                <div class="row">
-                    <div class="span14">
-                        @content
-                    </div>
-                </div>
-                
-            </div>
-
-            <footer>
-                <p>
-                    <a href="http://homehoner.com">www.homehoner.org</a>
-                </p>
-            </footer>
-
-        </div>
-        
+    	<div class="container-narrow">
+	       	<div class="masthead">
+				<ul class="nav nav-pills pull-right">
+					<li class="active"><a href="@routes.Application.home">Home</a></li>
+					<li><a href="@routes.Application.about">About</a><li>
+					<li><a href="@routes.Application.blog">Blog</a>
+					<li><a href="@routes.Application.contact">Contact</a></li>
+				</ul>
+				<h3 class="muted"><a href="@routes.Application.splash">OUGHT</a></h3>
+			</div>
+			
+			<hr>
+	
+	        @content
+	
+			<hr>
+			
+	        <div class="footer">
+				<p>&copy; Ought 2013</p>
+			</div>
+		</div>
     </body>
 </html>

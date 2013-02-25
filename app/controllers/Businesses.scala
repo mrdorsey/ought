@@ -9,6 +9,11 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
 import com.mongodb.casbah.commons.MongoDBObject
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import com.codahale.jerkson.Json._
+import org.codehaus.jackson.map.ObjectMapper
+import dto.BusinessWithAddressDto
 
 object Businesses extends Controller {
 
@@ -45,6 +50,10 @@ object Businesses extends Controller {
     Ok(html.signup.business(businessForm(), addressForm()))
   }
 
+  def search = Action {
+    Ok(html.search.businessSearch())
+  }
+   
   def create = Action { implicit request =>
     businessForm().bindFromRequest.fold(
       formWithErrors => BadRequest(html.signup.business(formWithErrors, addressForm())),
@@ -75,6 +84,19 @@ object Businesses extends Controller {
         )
       }
     )
+  }
+  
+  def findNearestBusinesses() = Action { implicit request =>
+    request.body.asFormUrlEncoded match {
+      case Some(map) => {
+        val location: List[Double] = List(map.get("latitude").get.head.toDouble, map.get("longitude").get.head.toDouble)
+        val businesses: List[BusinessWithAddressDto] = BusinessManager.findNearestBusinesses(location, 20)
+        
+        Ok(generate(businesses))
+      }
+      case None =>
+        BadRequest("Error retrieving businesses.")
+    }
   }
   
 }

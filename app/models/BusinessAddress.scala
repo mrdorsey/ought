@@ -26,8 +26,9 @@ object BusinessAddress extends ModelCompanion[BusinessAddress, ObjectId] {
 
   val columns = List("dummy", "_id", "line1", "line2", "city", "state", "zip")
   
-  /*def findByCenterAndRadius(center: List[Double], radius: Double): Option[Business] = dao.collection.find({ location: 
-  								{ $centerSphere: [ [ -74, 40.74 ] ,
-                                        radius / 3963.192 ] } } )*/
-  
+  def findByCenterAndRadius(center: List[Double], radius: Double): List[BusinessAddress] = {
+	val query: DBObject = MongoDBObject("location" -> MongoDBObject("$near" -> List(center(0), center(1))))
+		
+	return dao.find(query).toList
+  }
 }

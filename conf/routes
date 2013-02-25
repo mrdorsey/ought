@@ -2,18 +2,29 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           		controllers.Application.index
+# Splash page
+GET		/									controllers.Application.splash
 
-# Signup
+# Admin stuff
+GET 	/about								controllers.Application.about
+GET 	/blog								controllers.Application.blog
+GET 	/contact							controllers.Application.contact
+
+# Home page
+GET     /home                           	controllers.Application.home
+
+
+# Users
 GET     /users/signup               		controllers.Users.form
-#GET     /users/fakeuser             		controllers.Users.editForm
+#GET    /users/fakeuser             		controllers.Users.editForm
 POST    /users/signup               		controllers.Users.submit
 
-# Contact
+# Business
 GET     /businesses/signup                 	controllers.Businesses.form
 #GET     /businesses/fakebusiness       	controllers.Businesses.editForm
 POST    /businesses/signup                  controllers.Businesses.create
+GET		/businesses/search					controllers.Businesses.search
+POST	/businesses/findNearestBusiness		controllers.Businesses.findNearestBusinesses
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)

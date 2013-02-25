@@ -51,6 +51,7 @@ object BusinessAddressManager {
       case None => 0
     }
 
+    System.out.println(lat + ": " + long)
     address.location = List(lat, long)
 
     return address

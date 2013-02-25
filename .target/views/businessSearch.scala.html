@@ -1,0 +1,31 @@
+@()
+
+@main("Business Search") {
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			GeolocationHelper.getUserLocation();
+			
+			if(GeolocationHelper.latitude && GeolocationHelper.longitude) {
+				$.ajax({
+					url: '@routes.Businesses.findNearestBusinesses',
+					type: 'POST',
+					data: {
+						latitude: GeolocationHelper.latitude,
+						longitude: GeolocationHelper.longitude
+					},
+					success: function(resp) {
+					
+					},
+					error: function(resp) {
+					
+					}
+				});
+			}
+		});
+	</script>
+
+
+	<script src="@routes.Assets.at("javascripts/geolocationHelper.js")" type="text/javascript"></script>	 
+
+}
