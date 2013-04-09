@@ -4,17 +4,20 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import views._
-import models._
+import play.api.cache.Cache
+import play.api.Play.current
+
 import org.bson.types.ObjectId
+
 import domain.UserManager
+import models.User
+import views._
 
 object Users extends Controller {
 
-  val signupForm: Form[User] = Form(
+  def signupForm(): Form[User] = Form(
 
     mapping(
-      "id" -> ignored(new ObjectId),
       "username" -> text(minLength = 4),
       "email" -> email,
       "city" -> nonEmptyText,
@@ -32,34 +35,66 @@ object Users extends Controller {
       
     )
     {
-      (id, username, email, city, passwords, _) => User(id, username, email, city,  passwords._1) 
+      (username, email, city, passwords, _) => User(new ObjectId, username, email, city,  passwords._1) 
     } 
     {
-      user => Some(user.id, user.username, user.email, user.city, (user.password, ""), false)
+      user => Some(user.username, user.email, user.city, (user.password, ""), false)
     }.verifying(
       "This username is not available",
       user => !Seq("admin", "guest").contains(user.username)
     )
   )
+  
+  def editForm(user_id: ObjectId): Form[User] = Form(
 
-  def form = Action {
-    Ok(html.signup.user(signupForm));
+    mapping(
+      "id" -> optional(text),
+      "username" -> text(minLength = 4),
+      "email" -> email,
+      "password" -> text,
+      "city" -> nonEmptyText 
+    )
+    {
+      (id, username, email, password, city) => User(user_id, username, email, city, password) 
+    } 
+    {
+      user => Some(Some(user.id.toString()), user.username, user.email, user.password, user.city)
+    }
+  )
+  
+  def dashboard() = Action {
+	val user: User = Cache.get("user").asInstanceOf[User]
+     Ok(html.user.dashboard(editForm(user.id).fill(user)))
   }
 
-  /*def editForm = Action {
-    val existingUser = User(
-      "fakeuser", "fake@gmail.com", "Seattle, WA", "secret"
-    )
-    Ok(html.signup.user(signupForm.fill(existingUser)))
-  }*/
+  def signup = Action {
+    Ok(html.signup.user(signupForm()))
+  }
+
+  def editForm(form: Form[User]) = Action {
+     Ok(html.edit.user(form))
+  }
   
-  def submit = Action { implicit request =>
-    signupForm.bindFromRequest.fold(
-      // Form has errors, redisplay it
+  def create = Action { implicit request =>
+    signupForm().bindFromRequest.fold(
       errors => BadRequest(html.signup.user(errors)),
       user => {
         UserManager.create(user)
         Ok(html.signup.userSummary(user))
+      }
+    )
+  }
+  
+  def update = Action { implicit request =>
+	System.out.println(request.body.asFormUrlEncoded);
+	
+    val userId: ObjectId = new ObjectId(request.body.asFormUrlEncoded.get("user_id").head.toString)
+	  
+	editForm(userId).bindFromRequest.fold(
+      errors => BadRequest(html.user.dashboard(errors)),
+      user => {
+        UserManager.update(user)
+        Ok(html.user.dashboard(editForm(user.id).fill(user)))
       }
     )
   }

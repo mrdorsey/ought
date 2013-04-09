@@ -2,6 +2,10 @@ package models
 
 import java.util.{Date}
 import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.json.util._
+import play.api.libs.json.Writes._
+
 import com.novus.salat._
 import com.novus.salat.dao._
 import com.novus.salat.annotations._
@@ -31,4 +35,13 @@ object BusinessAddress extends ModelCompanion[BusinessAddress, ObjectId] {
 		
 	return dao.find(query).toList
   }
+  
+  implicit val businessAddressWrites: Writes[BusinessAddress] = (
+    (__ \ "_id").write[ObjectId] and
+    (__ \ "line1").write[String] and
+    (__ \ "line2").write[String] and
+    (__ \ "city").write[String] and
+    (__ \ "state").write[String] and
+    (__ \ "zip").write[String] and
+  )(unlift(BusinessAddress.unapply)) 
 }

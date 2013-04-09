@@ -1,22 +1,29 @@
 package models
 
 import java.util.Date
+
 import com.mongodb.casbah.Imports.MongoDBObject
 import com.mongodb.casbah.Imports.ObjectId
 import com.novus.salat.annotations.Key
 import com.novus.salat.dao.ModelCompanion
 import com.novus.salat.dao.SalatDAO
 import com.novus.salat.global.ctx
+
 import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.json.util._
+import play.api.libs.json.Writes._
 import se.radley.plugin.salat.mongoCollection
 import com.mongodb.DBObject
 
 case class Business(
   @Key("_id") id: ObjectId = new ObjectId,
   name: String,
+  //contact: String,
   website: String,
   established: Option[Date] = None,
-  @Key("address_id") addressId: ObjectId = new ObjectId)
+  @Key("address_id") addressId: ObjectId = new ObjectId
+)
 
 object Business extends ModelCompanion[Business, ObjectId] {
   val collection = mongoCollection("businesses")
@@ -42,6 +49,14 @@ object Business extends ModelCompanion[Business, ObjectId] {
 
     return dao.find(query).toList
   }
+  
+  implicit val businessWrites: Writes[Business] = (
+    (__ \ "_id").write[ObjectId] and
+    (__ \ "name").write[String] and
+    (__ \ "website").write[String] and
+    (__ \ "established").write[Option[Date]] and
+	(__ \ "address_id").write[ObjectId]
+  )(unlift(Business.unapply)) 
 }
 
 

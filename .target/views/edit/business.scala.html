@@ -1,0 +1,110 @@
+@(businessForm: Form[Business], addressForm: Form[BusinessAddress])
+
+@import helper._
+
+@import models.Country
+@import models.State
+
+@main("Business Edit", nav = "edit") {
+	    @helper.form(action = routes.Businesses.update) {
+	        
+	        <div class="row-fluid">
+		        <div class="span6">
+			        <fieldset>
+			            <legend>General Information</legend>
+			            
+			            @if(businessForm.hasGlobalErrors || businessForm.hasErrors || addressForm.hasGlobalErrors || addressForm.hasErrors) {
+				            <div class="alert alert-error"">
+					            @if(businessForm.hasGlobalErrors) {
+					            	@businessForm.globalErrors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)
+					            	}
+					            }
+					            
+					            @if(businessForm.hasErrors) {
+					            	@businessForm.errors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)
+					            	}
+					            }
+					            
+					            @if(addressForm.hasGlobalErrors) {
+					            	@addressForm.globalErrors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)
+					            	}
+					            }
+					            
+					            @if(addressForm.hasErrors) {
+					            	@addressForm.errors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)
+					            	}
+					            }
+				            </div>
+				        }
+				        
+				        <input type="hidden" value="@businessForm("id").value" name="business_id" />
+			            
+			            @inputText(
+			                businessForm("name"), 
+			                '_label -> "Name", 
+			                '_help -> "Please enter business name.",
+			                '_error -> businessForm.globalError
+			            )
+			            
+			            @inputText(
+			                businessForm("website"), '_label -> "Website",
+			                '_help -> "Please enter company's website."
+			            )
+			            
+			            @inputText(
+			                businessForm("established"), '_label -> "Established",
+			                '_help -> "Please enter the date company was established."
+			            )
+			            
+			        </fieldset>
+		        </div>
+		        
+		        <div class="span6">
+			        <fieldset>
+			            
+			            <legend>Address Information</legend>
+			            
+			            <input type="hidden" value="@addressForm("id").value" name="address_id" />
+			            
+			            @inputText(
+			                addressForm("line1"), '_label -> "Line 1",
+			                '_help -> "Enter a street, PO Box, or Apt #."
+			            )
+			            
+			            @inputText(
+			                addressForm("line2"), '_label -> "Line 2",
+			                '_help -> "Enter a street, PO Box, or Apt #."
+			            )
+			            
+			            @inputText(
+			                addressForm("city"), '_label -> "City",
+			                '_help -> "Enter your city."
+			            )
+			            
+			            @select(
+			                addressForm("state"), 
+			                options = options(State.list),
+			                '_default -> "--- Choose a state ---",
+			                '_label -> "State",
+			                '_error -> addressForm("state").error.map(_.withMessage("Please select your state"))
+			            )
+			            
+				        @inputText(
+			                addressForm("zip"), '_label -> "Zip",
+			                '_help -> "Enter your zip code."
+			            )
+			              
+			        </fieldset>
+			    </div>
+			        
+			    <div class="actions">
+			        <input type="submit" class="btn primary" value="Update">
+			        <a href="@routes.Application.splash" class="btn">Cancel</a>
+		      	</div>
+	       	</div>
+	    }
+}

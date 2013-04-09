@@ -11,8 +11,6 @@ import play.api.mvc._
 import com.mongodb.casbah.commons.MongoDBObject
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
-import com.codahale.jerkson.Json._
-import org.codehaus.jackson.map.ObjectMapper
 import dto.BusinessWithAddressDto
 
 object Businesses extends Controller {
@@ -22,6 +20,7 @@ object Businesses extends Controller {
     mapping(
       "id" -> ignored(id),
       "name" -> nonEmptyText,
+      //"contact" -> optional(email),
       "website" -> text,
       "established" -> optional(date("yyyy-MM-dd")),
       "addressId" -> ignored(addressId)
@@ -46,7 +45,7 @@ object Businesses extends Controller {
       }
   )
   
-  def form = Action {
+  def signup = Action {
     Ok(html.signup.business(businessForm(), addressForm()))
   }
 
@@ -70,8 +69,11 @@ object Businesses extends Controller {
     )
   }
   
-  def update(businessId: ObjectId, addressId: ObjectId) = Action { implicit request =>
-    businessForm(businessId).bindFromRequest.fold(
+  def update() = Action { implicit request =>
+    val businessId: ObjectId = new ObjectId(request.body.asFormUrlEncoded.get("business_id").head)
+    val addressId: ObjectId = new ObjectId(request.body.asFormUrlEncoded.get("address_id").head)
+    
+  	businessForm(businessId).bindFromRequest.fold(
       formWithErrors => BadRequest(html.signup.business(formWithErrors, addressForm())),
       business => {
         BusinessManager.update(business)
@@ -92,11 +94,39 @@ object Businesses extends Controller {
         val location: List[Double] = List(map.get("latitude").get.head.toDouble, map.get("longitude").get.head.toDouble)
         val businesses: List[BusinessWithAddressDto] = BusinessManager.findNearestBusinesses(location, 20)
         
-        Ok(generate(businesses))
+        Ok(Json.toJson(businesses))
       }
       case None =>
         BadRequest("Error retrieving businesses.")
     }
+  }
+  
+  def profile(businessId: ObjectId, addressId: ObjectId) = Action { request =>
+    val businessId: ObjectId = new ObjectId(request.body.asFormUrlEncoded.get("business_id").head)
+    val addressId: ObjectId = new ObjectId(request.body.asFormUrlEncoded.get("address_id").head)
+    
+    var business: Business = null
+    var address: BusinessAddress = null
+    
+    if (businessId == null || addressId == null) {
+    	BadRequest("Error retriving business information.")
+    }
+    
+    if (businessId != null) {
+    	Business.findOneByID(businessId) match {
+    		case Some(b) => business = b
+    		case None => BadRequest("Error retriving business information.")
+    	}
+    }
+    
+    if (addressId != null) {
+    	BusinessAddress.findOneByID(addressId) match {
+    		case Some(a) => address = a
+    		case None => BadRequest("Error retriving business information.")
+    	}
+    }
+    
+    Ok(html.business.profile(business, address))
   }
   
 }

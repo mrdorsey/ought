@@ -1,0 +1,70 @@
+@(userForm: Form[User])
+
+@import helper._
+@import helper.twitterBootstrap._
+    
+	    @helper.form(action = routes.Users.update) {
+	        
+	        <div class="row-fluid">
+	        	@if(userForm.hasGlobalErrors || userForm.hasErrors) {
+				            <div class="alert alert-error"">
+					            @if(userForm.hasGlobalErrors) {
+					            	@userForm.globalErrors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)<br/>
+					            	}
+					            }
+					            
+					            @if(userForm.hasErrors) {
+					            	@userForm.errors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)<br/>
+					            	}
+					            }
+					       	</div>
+					    }
+					    
+		        <div class="span6">
+			        <fieldset>
+			            <legend>General Information</legend>
+
+			            <input type="hidden" value="@userForm("id").value" name="user_id" />
+			            
+			            @inputText(
+			                userForm("username"), 
+			                '_disabled -> true,
+			                '_label -> "Username", 
+			                '_help -> "Please choose a valid username.",
+			                '_error -> userForm.globalError
+			            )
+			            
+			            @inputText(
+			                userForm("email"), '_label -> "Email",
+			                '_help -> "Please enter a valid email address."
+			            )
+			            
+			            <input type="hidden" value="@userForm("password").value" name="password" />
+			            
+			        </fieldset>
+			    </div>
+			        
+			    <div class="span6">
+			        <fieldset>
+			            
+			            <legend>Location Information</legend>
+			            
+			            @select(
+			                userForm("city"), 
+			                options = options(City.list),
+			                '_default -> "--- Choose a city ---",
+			                '_label -> "City",
+			                '_error -> userForm("city").error.map(_.withMessage("Please select your city"))
+			            )
+			              
+			        </fieldset>
+			        
+			        <div class="actions">
+			        	<input type="submit" class="btn-success" value="Update">
+			   	 	</div>
+			    </div>
+			</div>
+	        
+	    }

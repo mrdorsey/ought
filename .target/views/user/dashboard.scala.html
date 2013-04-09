@@ -1,0 +1,31 @@
+@(userForm: Form[User])
+
+@import play.api.cache.Cache
+@import play.api.Play.current
+
+@main("Ought") {
+	<div class="container">
+		<div class="tabbable tabs-left">
+	  		<ul class="nav nav-tabs">
+	   			 <li class="active"><a href="#search" data-toggle="tab">Search</a></li>
+	   			 <li><a href="#profile" data-toggle="tab">Profile</a></li>
+	   			 <li><a href="#calendar" data-toggle="tab">Calendar</a></li>
+	   			 <li><a href="#favorites" data-toggle="tab">Favorites</a></li>
+	  		</ul>
+	  		<div class="tab-content">
+	   			<div id="search" class="tab-pane active">
+		   			@search.businessSearch()
+		   		</div>
+	   			<div id="profile" class="tab-pane">
+		   			@edit.user(userForm)
+		   		</div>
+		   		<div id="calendar" class="tab-pane">
+		   			@user.calendar()
+		   		</div>
+		   		<div id="favorites" class="tab-pane">
+		   			@user.favorites()
+		   		</div>
+	  		</div>
+		</div>
+	</div>
+}

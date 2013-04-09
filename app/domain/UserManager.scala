@@ -23,4 +23,16 @@ object UserManager {
     
     return id
   }
+  
+  def findOneById(id: String): Option[User] = {
+	  return User.findOneById(id)
+  }
+  
+  def findOneByUsername(username: String): Option[User] = {
+    return User.findOneByUsername(username)
+  }
+  
+  def findOneByUsernamePassword(username: String, password: String): Option[User] = {
+    return User.findOneByUserPass(username, password)
+  }
 }

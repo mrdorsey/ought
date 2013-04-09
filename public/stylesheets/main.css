@@ -22,6 +22,15 @@ section#main .topRight {
     top: 70px;
 }
 
+table {
+	width: 98%;
+}
+
+tbody tr th, td {
+	text-align: center;
+	border: 1px solid;
+}
+
 table.computers em {
     color: #aaa;
 }

@@ -1,0 +1,53 @@
+@(business: Business, address: BusinessAddress)
+
+@main("Business Profile", nav = "business") {
+    
+    <div class="container">
+    
+	    <h2> @business.name</h2>
+
+	    <h6>Website</h6>
+	    
+	    <p>
+	        @business.website
+	    </p>
+	    
+	    <h6>Established</h6>
+	    
+	    <p>
+	        @business.established
+	    </p>
+	    
+	    <h2>Address informations:</h2>
+	    
+	    <h6>Line 1</h6>
+	    
+	    <p>
+	        @address.line1
+	    </p>
+	    
+	    <h6>Line 2</h6>
+	    
+	    <p>
+	        @address.line2
+	    </p>
+	    
+	    <h6>City</h6>
+	    
+	    <p>
+	        @address.city
+	    </p>
+	    
+	    <h6>State</h6>
+	    
+	    <p>
+	        @address.state
+	    </p>
+	    
+	    <h6>Zip</h6>
+	    
+	    <p>
+	        @address.zip 
+	    </p>
+	</div>
+}

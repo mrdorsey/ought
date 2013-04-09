@@ -5,6 +5,10 @@
 # Splash page
 GET		/									controllers.Application.splash
 
+# Login stuff
+POST	/login								controllers.Login.login
+POST	/logout								controllers.Login.logout
+
 # Admin stuff
 GET 	/about								controllers.Application.about
 GET 	/blog								controllers.Application.blog
@@ -13,18 +17,22 @@ GET 	/contact							controllers.Application.contact
 # Home page
 GET     /home                           	controllers.Application.home
 
-
 # Users
-GET     /users/signup               		controllers.Users.form
-#GET    /users/fakeuser             		controllers.Users.editForm
-POST    /users/signup               		controllers.Users.submit
+GET    	/user/signup               			controllers.Users.signup
+POST	/user/create						controllers.Users.create
+POST	/user/update						controllers.Users.update
+GET 	/user/dashboard						controllers.Users.dashboard
 
 # Business
-GET     /businesses/signup                 	controllers.Businesses.form
-#GET     /businesses/fakebusiness       	controllers.Businesses.editForm
-POST    /businesses/signup                  controllers.Businesses.create
-GET		/businesses/search					controllers.Businesses.search
-POST	/businesses/findNearestBusiness		controllers.Businesses.findNearestBusinesses
+GET    	/business/signup                  	controllers.Businesses.signup
+POST	/business/create					controllers.Businesses.create
+POST	/business/update					controllers.Businesses.update
+GET		/business/search					controllers.Businesses.search
+POST	/business/findNearestBusiness		controllers.Businesses.findNearestBusinesses
+GET		/business/profile					controllers.Businesses.profile(businessId: ObjectId, addressId: ObjectId)
+
+# Client Router
+GET		/clientRouter						controllers.ClientRouter.javascriptRoutes
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
