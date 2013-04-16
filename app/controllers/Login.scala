@@ -15,22 +15,18 @@ import java.util.UUID
 import domain.UserManager
 import models.User
 
-
-
 object Login extends Controller {
 
 	val loginForm = Form[(String, String)](
 		tuple(
 			"email" -> nonEmptyText,
-			"password" -> nonEmptyText
-		)
-	)
+			"password" -> nonEmptyText))
 
 	def login = Action { implicit request =>
 		val values = loginForm.bindFromRequest.data
 		val username = values("username")
 		val password = values("password")
-		
+
 		if ((username != null && !username.isEmpty()) && (password != null && !password.isEmpty())) {
 			UserManager.findOneByUsernamePassword(username, password) match {
 				case None => BadRequest("Invalid username / password")
@@ -39,12 +35,11 @@ object Login extends Controller {
 					Ok("Loggin In")
 				}
 			}
-		}
-		else {
+		} else {
 			BadRequest("Invalid username / password")
 		}
 	}
-	
+
 	def logout = Action { implicit request =>
 		current.plugin[EhCachePlugin].map {
 			cache => cache.cache.remove("user")
@@ -52,4 +47,4 @@ object Login extends Controller {
 		//clear session
 		Ok("Session cleared")
 	}
-} 
+}

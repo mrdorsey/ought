@@ -9,16 +9,15 @@ import se.radley.plugin.salat._
 import com.novus.salat.global._
 
 case class Company(
-  @Key("_id") id: ObjectId = new ObjectId, 
-  name:String
-)
+	@Key("_id") id: ObjectId = new ObjectId,
+	name: String)
 
 object Company extends ModelCompanion[Company, ObjectId] {
-  val collection = mongoCollection("users")
-  val dao = new SalatDAO[Company, ObjectId](collection = collection) {}
+	val collection = mongoCollection("users")
+	val dao = new SalatDAO[Company, ObjectId](collection = collection) {}
 
-  def options: Seq[(String,String)] = {
-    find(MongoDBObject.empty).map(it => (it.id.toString, it.name)).toSeq
-  }
+	def options: Seq[(String, String)] = {
+		find(MongoDBObject.empty).map(it => (it.id.toString, it.name)).toSeq
+	}
 
 }

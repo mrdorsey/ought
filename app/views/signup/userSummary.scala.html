@@ -1,20 +1,65 @@
-@(user: User)
+@(user: User, address: UserAddress)
 
 @main("Account created!", nav = "signup") {
     
     <div class="container">
-	    <h2>Your account:</h2>
+    
+	    <h2>Your Account:</h2>
 	    
-	    <h6>Username</h6>
+	    <h6>Name</h6>
 	    
 	    <p>
 	        @user.username
 	    </p>
 	    
+	    <h6>Email</h6>
+	    
+	    <p>
+	        @user.email
+	    </p>
+	    
+	    <h2>Address informations:</h2>
+	    
+	    <h6>Line 1</h6>
+	    
+	    <p>
+	        @address.line1
+	    </p>
+	    
+	    <h6>Line 2</h6>
+	    
+	    <p>
+	        @address.line2
+	    </p>
+	    
 	    <h6>City</h6>
 	    
 	    <p>
-	        @user.city
+	        @address.city
+	    </p>
+	    
+	    <h6>State</h6>
+	    
+	    <p>
+	        @address.state
+	    </p>
+	    
+	    <h6>Zip</h6>
+	    
+	    <p>
+	        @address.zip 
+	    </p>
+	    
+	    <h6>Type</h6>
+	    
+	    <p>
+	        @address.homeType 
+	    </p>
+	    
+	    <h6>Size</h6>
+	    
+	    <p>
+	        @address.size 
 	    </p>
 	</div>
 }

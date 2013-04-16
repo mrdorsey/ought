@@ -1,42 +1,35 @@
-@(signupForm: Form[User])
+@(userForm: Form[User], addressForm: Form[UserAddress])
 
 @import helper._
 @import helper.twitterBootstrap._
 
 @main("User Sign Up", nav = "signup") {
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/chosen.css")">
+	<script src="@routes.Assets.at("javascripts/chosen.jquery.min.js")" type="text/javascript"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$(".chzn-select").chosen();
+		});
+	</script>
+	
 	<div class="container">
 	    @helper.form(action = routes.Users.create) {
 	        <div class="row-fluid">
-	        	@if(signupForm.hasGlobalErrors || signupForm.hasErrors) {
-				            <div class="alert alert-error"">
-					            @if(signupForm.hasGlobalErrors) {
-					            	@signupForm.globalErrors.map { error =>
-					            		@error.key : @Messages(error.message, error.args: _*)<br/>
-					            	}
-					            }
-					            
-					            @if(signupForm.hasErrors) {
-					            	@signupForm.errors.map { error =>
-					            		@error.key : @Messages(error.message, error.args: _*)<br/>
-					            	}
-					            }
-					       	</div>
-					    }
-					    
 		        <div class="span6">
 			        <fieldset>
 			            <legend>General Information</legend>
 			            
-			            @if(signupForm.hasGlobalErrors || signupForm.hasErrors) {
+			            @if(userForm.hasGlobalErrors || userForm.hasErrors) {
 				            <div class="alert alert-error"">
-					            @if(signupForm.hasGlobalErrors) {
-					            	@signupForm.globalErrors.map { error =>
+					            @if(userForm.hasGlobalErrors) {
+					            	@userForm.globalErrors.map { error =>
 					            		@error.key : @Messages(error.message, error.args: _*)
 					            	}
 					            }
 					            
-					            @if(signupForm.hasErrors) {
-					            	@signupForm.errors.map { error =>
+					            @if(userForm.hasErrors) {
+					            	@userForm.errors.map { error =>
 					            		@error.key : @Messages(error.message, error.args: _*)
 					            	}
 					            }
@@ -45,28 +38,38 @@
 			            
 			            
 			            @inputText(
-			                signupForm("username"), 
+			                userForm("username"), 
 			                '_label -> "Username", 
 			                '_help -> "Please choose a valid username.",
-			                '_error -> signupForm.globalError
+			                '_error -> userForm.globalError
 			            )
 			            
 			            @inputText(
-			                signupForm("email"), '_label -> "Email",
+			                userForm("email"), '_label -> "Email",
 			                '_help -> "Please enter a valid email address."
 			            )
 			            
 			            @inputPassword(
-			                signupForm("password.main"), 
+			                userForm("password.main"), 
 			                '_label -> "Password",
 			                '_help -> "A password must be at least 6 characters. "
 			            )
 			            
 			            @inputPassword(
-			                signupForm("password.confirm"), 
+			                userForm("password.confirm"), 
 			                '_label -> "Repeat password",
 			                '_help -> "Please repeat your password again.",
-			                '_error -> signupForm.error("password")
+			                '_error -> userForm.error("password")
+			            )
+			            
+			        </fieldset>
+			        
+			        <fieldset>
+			            
+			            @checkbox(
+			                userForm("accept"), 
+			                '_label -> None, '_text -> "You agree to the Terms and conditions",
+			                '_showConstraints -> false
 			            )
 			            
 			        </fieldset>
@@ -75,26 +78,77 @@
 			    <div class="span6">
 			        <fieldset>
 			            
-			            <legend>Location Information</legend>
+			            <legend>Address Information</legend>
+			            
+			            @if(addressForm.hasGlobalErrors || addressForm.hasErrors) {
+				            <div class="alert alert-error"">
+					            @if(addressForm.hasGlobalErrors) {
+					            	@addressForm.globalErrors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)<br/>
+					            	}
+					            }
+					            
+					            @if(addressForm.hasErrors) {
+					            	@addressForm.errors.map { error =>
+					            		@error.key : @Messages(error.message, error.args: _*)<br/>
+					            	}
+					            }
+					       	</div>
+					    }
+			            
+			            @inputText(
+			                addressForm("line1"), '_label -> "Line 1",
+			                '_help -> "Enter a street, PO Box, or Apt #."
+			            )
+			            
+			            @inputText(
+			                addressForm("line2"), '_label -> "Line 2",
+			                '_help -> "Enter a street, PO Box, or Apt #."
+			            )
+			            
+			            @inputText(
+			                addressForm("city"), '_label -> "City",
+			                '_help -> "Enter your city."
+			            )
 			            
 			            @select(
-			                signupForm("city"), 
-			                options = options(City.list),
-			                '_default -> "--- Choose a city ---",
-			                '_label -> "City",
-			                '_error -> signupForm("city").error.map(_.withMessage("Please select your city"))
+			                addressForm("state"), 
+			                options = options(State.list),
+			                '_default -> "--- Choose a state ---",
+			                '_label -> "State",
+			                '_error -> addressForm("state").error.map(_.withMessage("Please select your state"))
+			            )
+			            
+				        @inputText(
+			                addressForm("zip"), '_label -> "Zip",
+			                '_help -> "Enter your zip code."
+			            )
+			            
+			            @select(
+			            	addressForm("homeType"),
+			            	options = options(HomeType.list),
+			                '_default -> "--- Choose a type ---",
+			                '_label -> "Home Type",
+			            	'_error -> addressForm("homeType").error.map(_.withMessage("Please select your type"))
+			            )
+			            
+			            @inputText(
+			            	addressForm("size"), '_label -> "Size",
+			            	'_help -> "Enter size of home in square feet."
 			            )
 			              
 			        </fieldset>
 			        
 			        <fieldset>
-			            
-			            @checkbox(
-			                signupForm("accept"), 
-			                '_label -> None, '_text -> "You agree the Terms and conditions",
-			                '_showConstraints -> false
-			            )
-			            
+			        	<legend>Services Desired</legend>
+			        	
+						<select data-placeholder="Choose Services Offerred" multiple class="chzn-select" style="width:400px;" tabindex="1">
+							<option value=""></option> 
+                			<option value="Dusting">Dusting</option> 
+                			<option value="Windows">Windows</option> 
+                			<option value="Floors">Floors</option> 
+                			<option value="Dishes">Dishes</option> 
+                		</select>
 			        </fieldset>
 			        
 			        <div class="actions">

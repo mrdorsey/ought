@@ -2,7 +2,7 @@ package domain
 
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.MongoDBObject
-import models.BusinessAddress
+import models.UserAddress
 import play.api.libs.json.JsValue
 import play.api.libs.ws.Response
 import scala.concurrent.Future
@@ -11,44 +11,44 @@ import akka.util.Timeout
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
-import models.Business
-import dto.BusinessAddressDto
 import scala.collection.mutable.ListBuffer
+import models.User
+import dto.UserAddressDto
 
-object BusinessAddressManager {
+object UserAddressManager {
 
 	val GeocodingProviderURL = "http://maps.googleapis.com/maps/api/geocode/json?address=[ADDRESS]&sensor=[USESENSOR]"
 	val useSensor = false
 
-	def geocodeAndCreateAddress(address: BusinessAddress): BusinessAddress = {
+	def geocodeAndCreateAddress(address: UserAddress): UserAddress = {
 		geocodeAddress(address)
-		BusinessAddress.insert(address)
-		BusinessAddress.collection.ensureIndex(MongoDBObject("location" -> "2d"))
+		UserAddress.insert(address)
+		UserAddress.collection.ensureIndex(MongoDBObject("location" -> "2d"))
 
 		return address
 	}
 
-	def geocodeAndUpdateAddress(address: BusinessAddress): BusinessAddress = {
+	def geocodeAndUpdateAddress(address: UserAddress): UserAddress = {
 		geocodeAddress(address)
-		BusinessAddress.save(address.copy(id = address.id))
-		BusinessAddress.collection.ensureIndex(MongoDBObject("location" -> "2d"))
+		UserAddress.save(address.copy(id = address.id))
+		UserAddress.collection.ensureIndex(MongoDBObject("location" -> "2d"))
 
 		return address
 	}
 
 	def deleteAddress(id: ObjectId): ObjectId = {
-		BusinessAddress.remove(MongoDBObject("_id" -> id))
+		UserAddress.remove(MongoDBObject("_id" -> id))
 
 		return id
 	}
 
-	def findNearestBusinesses(center: List[Double], radius: Double): List[BusinessAddressDto] = {
-		var businessList: ListBuffer[BusinessAddressDto] = ListBuffer()
-		val addresses: List[BusinessAddress] = BusinessAddress.findByCenterAndRadius(center, 20)
+	def findNearestUsers(center: List[Double], radius: Double): List[UserAddressDto] = {
+		var businessList: ListBuffer[UserAddressDto] = ListBuffer()
+		val addresses: List[UserAddress] = UserAddress.findByCenterAndRadius(center, 20)
 
 		addresses.foreach(address => {
-			val business: Option[Business] = Business.dao.findOne(MongoDBObject("address_id" -> address.id))
-			val businessWithAddress: BusinessAddressDto = BusinessAddressDto(business.get, address)
+			val business: Option[User] = User.dao.findOne(MongoDBObject("address_id" -> address.id))
+			val businessWithAddress: UserAddressDto = UserAddressDto(business.get, address)
 
 			businessList += businessWithAddress
 		})
@@ -56,7 +56,7 @@ object BusinessAddressManager {
 		return businessList.toList
 	}
 
-	private def geocodeAddress(address: BusinessAddress): BusinessAddress = {
+	private def geocodeAddress(address: UserAddress): UserAddress = {
 		implicit val timeout = Timeout(50000 milliseconds)
 
 		val urlString: String = GeocodingProviderURL.replace("[ADDRESS]", addressToURLString(address)).replace("[USESENSOR]", useSensor.toString)
@@ -82,7 +82,7 @@ object BusinessAddressManager {
 		return address
 	}
 
-	private def addressToURLString(address: BusinessAddress): String = {
+	private def addressToURLString(address: UserAddress): String = {
 		var addressURLString: String = ""
 
 		addressURLString = addressURLString.concat(address.line1.replaceAll(" ", "+").concat("+"))

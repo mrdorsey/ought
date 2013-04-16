@@ -1,9 +1,8 @@
 package models
 
 object Country {
-  
-  val list = List(
-    "United States"
-  )
-  
+
+	val list = List(
+		"United States")
+
 }

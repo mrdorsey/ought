@@ -7,19 +7,12 @@
 @import models.State
 
 @main("Business Sign Up", nav = "signup") {
-	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/tagit-simple-green.css")">
-	<script src="@routes.Assets.at("javascripts/tagit.js")" type="text/javascript"></script>
+	<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/chosen.css")">
+	<script src="@routes.Assets.at("javascripts/chosen.jquery.min.js")" type="text/javascript"></script>
 
 	<script type="text/javascript">
-		$("#services-offered").tagit({
-			tagSource: [
-				'Floors',
-				'Dishes',
-				'Dusting',
-				'Laundry'
-			],
-			allowNewTags: false,
-			sortable: true
+		$(document).ready(function () {
+			$(".chzn-select").chosen();
 		});
 	</script>
 	
@@ -66,7 +59,7 @@
 			            )
 			            
 			            @inputText(
-			                businessForm("contact"), '_label -> "Contact Email",
+			                businessForm("contactEmail"), '_label -> "Contact Email",
 			                '_help -> "Please enter a valid email address."
 			            )
 			            
@@ -84,9 +77,15 @@
 			        
 			        			        
 			        <fieldset>
-			        	<legend>Service Information</legend>
+			        	<legend>Services Offered</legend>
 			        	
-			        	<ul id="services-offered" name="services" class="tagit"></ul>
+						<select data-placeholder="Choose Services Offerred" multiple class="chzn-select" style="width:400px;" tabindex="1">
+							<option value=""></option> 
+                			<option value="Dusting">Dusting</option> 
+                			<option value="Windows">Windows</option> 
+                			<option value="Floors">Floors</option> 
+                			<option value="Dishes">Dishes</option> 
+                		</select>
 			        </fieldset>
 			    </div>
 			    
@@ -142,5 +141,5 @@
 	        	</div>
 	        </div>
 	    }
-	</div>
+	</div>	
 }

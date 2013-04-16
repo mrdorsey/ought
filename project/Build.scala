@@ -4,12 +4,13 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "homeHoner"
+    val appName         = "ought"
     val appVersion      = "1.0"
 
     val appDependencies = Seq(
       "se.radley" %% "play-plugins-salat" % "1.2",
-      "com.typesafe" % "play-plugins-mailer_2.9.1" % "2.0.4" 
+      "org.mongodb"         %% "casbah-core"     % "2.5.0",
+      "com.novus"          %% "salat-core" % "1.9.2-SNAPSHOT"
     )
 
     val main = play.Project(appName, appVersion, appDependencies).settings(
