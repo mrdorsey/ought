@@ -1,1 +1,1 @@
-first iteration of homeHoner, ought, hreinsa, whatever we're going to call this
+local business prototype app that never went anywhere
